@@ -4,7 +4,7 @@
 #include <time.h>
 
 
-const bool LOG_UI_VALUES = true;
+static const bool LOG_UI_VALUES = true;
 
 bool isConnected = false;
 
