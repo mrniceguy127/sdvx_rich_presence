@@ -98,12 +98,15 @@ void get_details(char* details) {
 
 int main(int argc, char **argv) {
     unsigned int attemptsLeft = 600; // (600 * 200ms) / 1000 = 2min + execution time
-    while (!memory_reader_init() && attemptsLeft) {
-      printf("Trying again...");
-      Sleep(200);
+    while (attemptsLeft && !memory_reader_init()) {
       attemptsLeft--;
+      if (attemptsLeft) {
+        printf("Trying again...");
+        Sleep(200);
+      }
     }
 
+    if (!attemptsLeft) return 1;
     if (!discord_connect("1147201376879910962", on_dispatch)) return 1;
 
     DWORD pid = memory_reader_process_id();
