@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <time.h>
 
+
+const bool LOG_UI_VALUES = true;
+
 bool isConnected = false;
 
 void on_dispatch() {
@@ -10,9 +13,21 @@ void on_dispatch() {
     printf("Handshake complete\nIf you see a \"Memory read failed with error code 299\" but the program hasn't stopped, you can just ignore it. Happens in between transitioning states.\n");
 }
 
+void log_ui_values() {
+    if (!LOG_UI_VALUES) return;
+    for (int i=0; i<26; i++) {
+        UI_OBJECT obj = MemoryData.UiObjects[i];
+        if (strlen(obj.label) > 0) {
+            printf("UI OBJECT: %s\n", obj.label);
+            printf("  VALUE: %s\n", obj.text);
+        }
+    }
+}
+
 char* get_ui_value(char* label) {
     for (int i=0; i<26; i++) {
         UI_OBJECT obj = MemoryData.UiObjects[i];
+
         if (strcmp(obj.label, label) == 0) {
             return MemoryData.UiObjects[i].text;
         }
@@ -21,6 +36,7 @@ char* get_ui_value(char* label) {
 }
 
 void get_details(char* details) {
+    log_ui_values();
     char* artist = get_ui_value("info_usr/artist_selected_usr");
     char* title = get_ui_value("info_usr/title_selected_usr");
     switch(MemoryData.GameState) {
@@ -82,7 +98,7 @@ void get_details(char* details) {
 
 int main(int argc, char **argv) {
     if (!memory_reader_init()) return 1;
-    if (!discord_connect("1032756213445836801", on_dispatch)) return 1;
+    if (!discord_connect("1147201376879910962", on_dispatch)) return 1;
 
     DWORD pid = memory_reader_process_id();
     unsigned long long createdAt = time(NULL);
